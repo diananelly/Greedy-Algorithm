@@ -1,4 +1,14 @@
 def activity_selection(start_times, finish_times):
+    """
+    Selects the maximum number of non-overlapping activities.
+
+    Parameters:
+    start_times (list): List of start times for activities.
+    finish_times (list): List of corresponding finish times.
+
+    Returns:
+    list: List of selected activities (start, finish).
+    """
     #Combines the start and finish times into a list of activities
     activities= list(zip(start_times, finish_times))
 
@@ -26,7 +36,6 @@ if __name__ == '__main__':
         finish = int(input(f'Enter the finish time for band {i+1}:'))
         start_times.append(start)
         finish_times.append(finish)
-
 
     selected = activity_selection(start_times, finish_times)
     print("Selected bands performances")
