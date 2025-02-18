@@ -1,6 +1,5 @@
 import heapq
 
-
 class HuffmanNode:
     """Represents a node in the Huffman tree."""
 
