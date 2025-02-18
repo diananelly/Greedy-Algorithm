@@ -1,6 +1,8 @@
 import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
+import heapq  # Import heapq for the priority queue
+
 
 class WarehouseNetwork:
     def __init__(self, num_vertices):
@@ -27,28 +29,37 @@ class WarehouseNetwork:
         nx.draw_networkx_edge_labels(G, pos, edge_labels=labels)
         plt.show()
 
-    def prim_mst(self): # prim's algorithm for MST
+    def prim_mst(self):  # prim's algorithm for MST using a priority queue
         selected = np.zeros(self.num_vertices, dtype=bool)  # track selected vertices
         selected[0] = True  # start from the first vertex
         mst_edges = []
         total_cost = 0
 
-        for _ in range(self.num_vertices - 1):
-            min_weight = float("inf")
-            u, v = -1, -1
+        # Priority Queue to store the edges (weight, u, v)
+        pq = []
 
-            # Find the minimum weight edge that connects an included vertex to an excluded one
-            for i in range(self.num_vertices):
-                if selected[i]:
-                    for j in range(self.num_vertices):
-                        if not selected[j] and self.graph[i][j] > 0 and self.graph[i][j] < min_weight:
-                            min_weight = self.graph[i][j]
-                            u, v = i, j
+        # Add edges from the first vertex to the priority queue
+        for j in range(1, self.num_vertices):
+            if self.graph[0][j] > 0:
+                heapq.heappush(pq, (self.graph[0][j], 0, j))
 
-            if u != -1 and v != -1:
-                selected[v] = True
-                mst_edges.append((u, v, min_weight))
-                total_cost += min_weight
+        while pq:
+            # Extract the edge with the minimum weight
+            weight, u, v = heapq.heappop(pq)
+
+            # If v is already selected, skip it
+            if selected[v]:
+                continue
+
+            # Select the vertex and add the edge to MST
+            selected[v] = True
+            mst_edges.append((u, v, weight))
+            total_cost += weight
+
+            # Add all edges from v to the priority queue
+            for w in range(self.num_vertices):
+                if not selected[w] and self.graph[v][w] > 0:
+                    heapq.heappush(pq, (self.graph[v][w], v, w))
 
         # Print and plot MST
         print("Minimum Spanning Tree (MST) Edges:")
@@ -66,7 +77,7 @@ class WarehouseNetwork:
         for u, v, weight in mst_edges:
             G.add_edge(u, v, weight=weight)
 
-        pos = nx.spring_layout(G)  
+        pos = nx.spring_layout(G)
         labels = nx.get_edge_attributes(G, "weight")
 
         plt.figure(figsize=(8, 6))
@@ -74,6 +85,7 @@ class WarehouseNetwork:
         nx.draw(G, pos, with_labels=True, node_color="lightgreen", node_size=700, font_size=10, edge_color="blue")
         nx.draw_networkx_edge_labels(G, pos, edge_labels=labels)
         plt.show()
+
 
 def main():
     num_warehouses = 5  # Change this to let the user specify the number of warehouses
@@ -95,25 +107,7 @@ def main():
 
     print("\nFinding Minimum Spanning Tree (MST):")
     network.prim_mst()
-'''
-NOT WORKING!!!
-def main2():
-        num_warehouses = int(input("Enter the number of warehouses (nodes): "))
-        network = WarehouseNetwork(num_warehouses)
 
-        num_edges = int(input("Enter the number of connections (edges): "))
 
-        print("Enter each connection in the format: start end weight")
-        for _ in range(num_edges):
-            u, v, weight = map(int, input().split())
-            network.add_edge(u, v, weight)
-
-        print("User-Defined Warehouse Network:")
-        network.plot_graph()
-
-        print("\nFinding Minimum Spanning Tree (MST):")
-        network.prim_mst()
-'''
 if __name__ == "__main__":
     main()
-    #main2()    #to ask user to input edges
