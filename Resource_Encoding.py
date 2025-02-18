@@ -93,19 +93,3 @@ if __name__ == "__main__":
     total_bits = calculate_encoded_size(sensor_data, codes)
     print(f"\nEstimated Total Encoded Size: {total_bits} bits")
 
-    # Step 5: Option to add a new sensor dynamically
-    add_new_sensor = input("\nDo you want to add a new sensor type? (yes/no): ").strip().lower()
-    if add_new_sensor == "yes":
-        new_sensor_type = input("Enter new sensor type: ")
-        new_frequency = int(input(f"Enter frequency for {new_sensor_type}: "))
-        sensor_data[new_sensor_type] = new_frequency
-
-        # Rebuild Huffman tree with updated data
-        codes = huffman_coding(sensor_data)
-        total_bits = calculate_encoded_size(sensor_data, codes)
-
-        print("\nUpdated Huffman Codes:")
-        for char in sorted(codes.keys()):
-            print(f"Character: {char}, Code: {codes[char]}")
-
-        print(f"\nUpdated Estimated Total Encoded Size: {total_bits} bits")
